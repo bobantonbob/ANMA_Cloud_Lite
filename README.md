@@ -81,3 +81,23 @@ GitHub Actions підготовлено для перевірок після с�
 ## Пошта для реєстрації
 
 Парольна реєстрація вимагає підтвердження адреси. Налаштуйте EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL та TLS/SSL у локальній .env. Для SMTP встановіть DJANGO_EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend. При DEBUG=1 без цього параметра лист із посиланням друкується в консоль Django; це лише локальний режим, лист не надсилається. Секрети не додавайте до Git. Наявні користувачі та їхні будинки збережені.
+
+## Server updates (one command)
+
+From the existing Linux server checkout, run:
+
+```sh
+bash deploy.sh
+```
+
+For the first update that introduces this script, run:
+
+```sh
+git pull --ff-only && bash deploy.sh
+```
+
+The script updates the website from its upstream branch, checks out the integration release pinned in `integration-version.txt`, builds the Docker image (including static assets), checks Django, stops the web service, backs up SQLite into `.backups/`, applies migrations, and starts the service with a health check. Expect a short interruption during backup and migrations. Existing `.env`, database, port bindings, and credentials are preserved.
+
+Requires Bash, Git, `flock`, and Docker Compose v2 with `up --wait`. Run as the server checkout owner with Docker permissions. Tracked local changes stop deployment rather than being overwritten. An existing `ha_integration` directory must be a clean clone of `https://github.com/bobantonbob/anma-cloud.git`.
+
+If deployment fails after the service stops, inspect the reported error and backup path before restarting. Database rollback is deliberately manual. Keep `.backups/` private; backups contain account and connection data. This command does not configure DNS, HTTPS, Tailscale, or initial server setup.

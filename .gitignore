@@ -39,3 +39,5 @@ staticfiles/
 '@ | Set-Content .gitignore
 /ha_integration/
 /hacs-catalog-submission/
+
+/.deploy.lock

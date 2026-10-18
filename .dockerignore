@@ -13,3 +13,7 @@ ha_integration/.test-deps/
 .local-secrets/
 release/
 .github/
+
+**/.git
+.deploy.lock
+/hacs-catalog-submission/
