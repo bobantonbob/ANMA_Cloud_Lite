@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% load i18n socialaccount %}{% block content %}
+<div class="auth-wrap"><div class="pill">ANMA CLOUD</div><h1>{% trans "Sign In" %}</h1>
+{% include "account/google_button.html" %}
+<form class="auth-form" method="post" action="{% url 'account_login' %}">{% csrf_token %}{{ form.as_p }}{{ redirect_field }}<button class="btn primary" type="submit">{% trans "Sign In" %}</button></form>
+<p class="auth-switch"><a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a></p>
+<p class="auth-switch"><a href="{% url 'register' %}">{% trans "Sign Up" %}</a></p></div>{% endblock %}

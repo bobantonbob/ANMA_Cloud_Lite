@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% block content %}
+<div class="page-heading"><div><div class="section-kicker">ANMA CONNECT</div><h1>Додати будинок<span class="orange">.</span></h1><p>Три поля — і ваша енергія в особистому кабінеті.</p></div><a class="btn ghost" href="{% url 'plants' %}">Мої будинки</a></div>
+<div class="connect-layout"><section class="panel form-panel"><form method="post" autocomplete="off">{% csrf_token %}{{ form.non_field_errors }}
+{% for field in form %}<div class="connect-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{{ field.errors }}{% if field.help_text %}<p class="muted small">{{ field.help_text }}</p>{% endif %}</div>{% endfor %}
+<button class="btn primary wide" type="submit">Перевірити й підключити →</button></form></section>
+<aside class="panel connect-guide"><span class="pill">ПЕРЕД ПІДКЛЮЧЕННЯМ</span><h2>Встановіть ANMA Cloud</h2>
+<h3>1. Через HACS — рекомендовано</h3>
+<p><a class="btn primary" href="https://my.home-assistant.io/redirect/hacs_repository/?owner=bobantonbob&amp;repository=anma-cloud&amp;category=integration" target="_blank" rel="noopener">Додати через HACS →</a></p>
+<p class="muted">Потрібен налаштований HACS. Додайте репозиторій один раз — потім ANMA Cloud буде доступний у пошуку вашого HACS та отримуватиме оновлення.</p>
+<ol><li>Відкрийте посилання та додайте ANMA Cloud. Або HACS → ⋮ → Custom repositories → <a href="https://github.com/bobantonbob/anma-cloud" target="_blank" rel="noopener">bobantonbob/anma-cloud</a>, тип Integration.</li><li>Натисніть Download і перезапустіть Home Assistant.</li><li>Налаштування → Пристрої та служби → Додати інтеграцію → ANMA Cloud.</li></ol>
+<details><summary>2. Без HACS — встановити вручну</summary><p><a class="btn ghost" href="{% url 'integration_download' %}">Завантажити ZIP інтеграції ↓</a></p><p>Розпакуйте архів. Скопіюйте папку <code>custom_components/anma_cloud</code> у <code>/config/custom_components/anma_cloud</code> вашого Home Assistant, перезапустіть його та додайте інтеграцію ANMA Cloud.</p></details>
+<h3>Підключіть будинок</h3><ol><li>У налаштуваннях ANMA Cloud виберіть і збережіть сутності.</li><li>Відкрийте «Підключення сайту» й створіть одноразовий код.</li><li>Введіть назву будинку, Tailscale IP та код у формі. Код діє 15 хвилин.</li></ol><p class="muted">Сервер ANMA та Home Assistant мають бути у доступній мережі Tailscale. Підключення дозволяє лише читати вибрані показники.</p></aside></div>
+{% endblock %}

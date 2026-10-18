@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mobile-status-strip"><span class="status-dot"></span><span data-connection-label>—</span><small id="updatedMobile">—</small></div>
+<div class="page-heading">
+  <div>
+    <div class="section-kicker">OVERVIEW / LIVE MONITORING</div>
+    <h1 class="orange" data-i18n="energyOverview">Енергетичний огляд</h1>
+    <p data-i18n="overviewDesc">Усі важливі показники вашої системи в реальному часі.</p>
+  </div>
+  {% if plant %}
+  <div class="online"><span class="status-dot"></span><span data-connection-label>—</span> <small id="updated">—</small></div>
+  {% endif %}
+</div>
+
+<a class="mobile-anma-link" href="#anma-services" data-i18n="mobileServices">Можливості ANMA · база знань і послуги ↓</a>
+{% if plant %}
+<div class="object-bar">
+  <div class="object-ident">
+    <span class="object-icon">⌂</span>
+    <div>
+      <span class="muted tiny" data-i18n="selectedSite">ОБРАНИЙ ОБ'ЄКТ</span>
+      <strong>{{ plant.name }}</strong>
+      <span class="muted tiny">{{ plant.model }}</span>
+    </div>
+  </div>
+  <form method="get">
+    <select name="plant" onchange="this.form.submit()" aria-label="Object selection">
+      {% for item in plants %}
+      <option value="{{ item.pk }}" {% if item.pk == plant.pk %}selected{% endif %}>{{ item.name }} — {{ item.model }}</option>
+      {% endfor %}
+    </select>
+  </form>
+</div>
+
+{% if not demo_preview %}<form class="mode-switch" method="get" aria-label="Data source">
+  <input type="hidden" name="plant" value="{{ plant.pk }}">
+  <span data-i18n="dataSource">Джерело даних</span>
+  <button type="submit" name="mode" value="demo" class="btn {% if mode == 'demo' %}primary{% else %}ghost{% endif %}" aria-pressed="{% if mode == 'demo' %}true{% else %}false{% endif %}">Demo</button>
+  <button type="submit" name="mode" value="live" class="btn {% if mode == 'live' %}primary{% else %}ghost{% endif %}" aria-pressed="{% if mode == 'live' %}true{% else %}false{% endif %}" {% if not live_available %}disabled{% endif %}>Live · Home Assistant</button>
+</form>
+{% if not live_available %}<p class="muted small" data-i18n="liveNotBound">Live доступний для об’єкта, прив’язаного до локального Home Assistant.</p>{% endif %}
+{% endif %}
+{% if mode == "demo" %}<div class="notice">Демонстраційні дані. Сподобався такий моніторинг? <a href="https://anma-electric.com.ua/" class="orange">Зв’яжіться з ANMA — замовити підключення →</a> · <a href="{% url 'add_plant' %}">Додати свій будинок</a></div>{% endif %}
+<p id="telemetryError" class="notice" role="status" hidden></p>
+<section class="panel energy-visual" aria-label="Live energy flow">
+  <div class="panel-heading"><div><strong data-i18n="liveFlowTitle">Живі енергопотоки</strong><p data-i18n="liveFlowDesc">Поточний баланс електростанції · оновлення кожні 10 с</p></div><span class="range" id="flowConnection">DEMO</span></div>
+  <div class="energy-flow-canvas">
+    <svg class="flow-links" viewBox="0 0 600 380" preserveAspectRatio="none" aria-hidden="true">
+      <path id="wirePv" d="M300 78 V185" class="wire solar-wire"/><path id="wireGrid" d="M107 205 H260" class="wire grid-wire"/><path id="wireLoad" d="M340 205 H493" class="wire load-wire"/><path id="wireBattery" d="M300 230 V313" class="wire battery-wire"/>
+      <circle class="particle paused solar-particle" r="4"><animateMotion dur="1.8s" repeatCount="indefinite" path="M300 78 V185"/></circle>
+      <circle class="particle paused grid-particle" r="4"><animateMotion id="animGrid" dur="1.9s" repeatCount="indefinite" path="M107 205 H260"/></circle>
+      <circle class="particle paused load-particle" r="4"><animateMotion dur="1.6s" repeatCount="indefinite" path="M340 205 H493"/></circle>
+      <circle class="particle paused battery-particle" r="4"><animateMotion id="animBattery" dur="1.8s" repeatCount="indefinite" path="M300 313 V230"/></circle>
+    </svg>
+    <div class="flow-item flow-solar"><span class="flow-glyph" id="sunGlyph">☀</span><strong><span id="flowPv">—</span> <small>кВт</small></strong><span class="flow-name" data-i18n="flowSolar">СОНЦЕ · PV</span><span class="flow-state" id="flowSolarStatus">—</span></div>
+    <div class="flow-item flow-grid"><span class="flow-glyph">🌐</span><strong><span id="flowGrid">—</span> <small>кВт</small></strong><span class="flow-name" data-i18n="grid">Електромережа</span><span class="flow-state" id="flowGridStatusText">—</span></div>
+    <div class="flow-item flow-load"><span class="flow-glyph">🏠</span><strong><span id="flowLoad">—</span> <small>кВт</small></strong><span class="flow-name" data-i18n="flowHouse">БУДИНОК</span></div>
+    <div class="flow-hub"><div class="hub-symbol">⚡</div><small>ANMA</small></div>
+    <div class="flow-item flow-battery"><span class="flow-glyph">🔋</span><strong><span id="flowSoc">—</span><small>%</small></strong><span class="flow-name" data-i18n="battery">Акумулятор</span><span class="flow-state" id="flowBatteryStatus">—</span><span class="flow-battery-power" id="flowBatteryPower">— кВт</span></div>
+  </div>
+  <div class="flow-footer"><span><i class="flow-led"></i><span data-i18n="flowFooter">Демонстраційні показники · потоки змінюють напрямок автоматично</span></span><span id="flowUpdated">—</span></div>
+</section>
+<section class="forecast-grid" aria-label="Solar forecast">
+  <article class="panel forecast-card"><div class="forecast-icon">☀</div><div><div class="forecast-label" data-i18n="forecastToday">Прогноз генерації · сьогодні</div><div class="forecast-value"><span id="forecastToday">—</span><small>кВт·год</small></div><div class="forecast-caption" data-i18n="forecastDemo">Демонстраційна оцінка, не погодний прогноз</div></div></article>
+  <article class="panel forecast-card"><div class="forecast-icon tomorrow">◕</div><div><div class="forecast-label" data-i18n="forecastTomorrow">Прогноз генерації · завтра</div><div class="forecast-value"><span id="forecastTomorrow">—</span><small>кВт·год</small></div><div class="forecast-caption" data-i18n="forecastDemo">Демонстраційна оцінка, не погодний прогноз</div></div></article>
+</section>
+<div class="kpi-grid desktop-kpis">
+  <article class="kpi">
+    <div class="kpi-title"><span class="kpi-icon sun">☀</span><span data-i18n="solar">Сонячна генерація</span></div>
+    <div class="kpi-number"><span id="pv">—</span><small>кВт</small></div>
+    <div class="kpi-foot"><span class="dot amber"></span><span data-i18n="solarReal">Поточна потужність</span></div>
+  </article>
+  <article class="kpi">
+    <div class="kpi-title"><span class="kpi-icon house">⌂</span><span data-i18n="homeLoad">Навантаження</span></div>
+    <div class="kpi-number"><span id="load">—</span><small>кВт</small></div>
+    <div class="kpi-foot"><span class="dot blue"></span><span data-i18n="homeReal">Споживання будинку</span></div>
+  </article>
+  <article class="kpi">
+    <div class="kpi-title"><span class="kpi-icon battery">▰</span><span data-i18n="battery">Акумулятор</span><div class="progress battery-title-progress"><div id="socBar" style="width:0%"></div></div></div>
+    <div class="battery-summary-line"><div class="kpi-number"><span id="soc">—</span><small>%</small></div><div class="battery-flow-inline"><span class="battery-direction-mark" id="batteryDirectionMark" aria-hidden="true">—</span><span><strong id="batteryPower">— кВт</strong><small id="batteryStatus">—</small></span></div></div>
+  </article>
+  <article class="kpi">
+    <div class="kpi-title"><span class="kpi-icon grid">ϟ</span><span data-i18n="grid">Електромережа</span></div>
+    <div class="kpi-number"><span id="grid">—</span><small>кВт</small></div>
+    <div class="kpi-foot"><span class="dot blue"></span><span id="gridStatus">—</span></div>
+  </article>
+</div>
+
+<div class="section-title">
+  <h2 data-i18n="energyTrends">Енергетичні тренди</h2>
+  <span class="range">◷ <span data-i18n="last24">Останні 24 години</span></span>
+</div>
+
+<p class="muted small" id="historyStatus" role="status"></p>
+<div class="chart-grid">
+  <section class="panel chart-panel">
+    <div class="panel-heading">
+      <div>
+        <strong data-i18n="powerProfile">Профіль потужності</strong>
+        <p data-i18n="powerProfileDesc">Сонце · Будинок · Мережа · останні 24 години</p>
+      </div>
+      <span class="panel-icon">⌁</span>
+    </div>
+    <div class="legend"><span><i class="amber"></i>PV</span><span><i class="blue"></i>LOAD</span><span><i class="purple"></i>GRID</span></div>
+    <div class="interactive-chart"><div class="chart-reticle" id="powerReticle" hidden></div><canvas id="powerChart" height="190" role="img" aria-label="24-hour power graph"></canvas><div id="powerTooltip" class="chart-tooltip" hidden></div></div>
+  </section>
+
+  <section class="panel chart-panel">
+    <div class="panel-heading">
+      <div>
+        <strong data-i18n="batteryDynamics">Динаміка акумулятора</strong>
+        <p data-i18n="chargeDischarge">Заряд та розряд · SOC</p>
+      </div>
+      <span class="panel-icon">▱</span>
+    </div>
+    <div class="legend"><span><i class="green"></i>SOC %</span><span><i class="amber"></i>Battery kW</span></div>
+    <div class="interactive-chart"><div class="chart-reticle" id="batteryReticle" hidden></div><canvas id="batteryChart" height="190" role="img" aria-label="Battery SOC and power"></canvas><div id="batteryTooltip" class="chart-tooltip" hidden></div></div>
+  </section>
+</div>
+
+<div class="bottom-grid"><section class="panel daily-panel">
+    <div class="panel-heading"><strong data-i18n="dailySummary">Сьогодні</strong><span class="range">00–24</span></div>
+    <span class="muted" data-i18n="solarProduction">Генерація сонця</span>
+    <div class="daily-value"><span id="daily">—</span><small>кВт·год</small></div>
+    <p id="solarHourlyStatus" class="muted small">Генерація за кожну годину · завантаження історії…</p>
+    <div id="solarHourly" class="solar-hourly" aria-label="Погодинна генерація сонця"></div>
+    <div class="mini-bars" aria-hidden="true" {% if mode == 'live' %}hidden{% endif %}><span style="height:32%"></span><span style="height:47%"></span><span style="height:63%"></span><span style="height:90%"></span><span style="height:72%"></span><span style="height:100%"></span><span style="height:64%"></span><span style="height:49%"></span><span style="height:30%"></span></div>
+    <p class="muted small" data-i18n="demoCaption">Показники демонстраційні, не з реального обладнання</p>
+  </section></div>
+<div class="health-early"><section class="panel">
+    <div class="health-row"><span class="health-ico">✓</span><div><b id="inverterStatus">Інвертор онлайн</b><small id="connectionStatus">З'єднання активне</small></div><span class="muted" data-mode-label>DEMO</span></div>
+    <div class="health-row"><span class="health-ico">✓</span><div><b id="gridHealth">Мережа доступна</b><small id="voltage">—</small></div><span class="muted" data-mode-label>DEMO</span></div>
+    <div class="health-row"><span class="health-ico">✓</span><div><b id="faultStatus">Помилок не виявлено</b><small data-i18n="faultHint">Статус інвертора</small></div><span class="muted" data-mode-label>DEMO</span></div>
+  </section></div>
+
+{% else %}
+<a class="btn ghost" href="{% url 'demo_dashboard' %}">Переглянути демо →</a><section class="empty-state">
+  <span>◈</span>
+  <h2 data-i18n="noSites">Поки немає об'єктів</h2>
+  <p data-i18n="addDemo">Додай перший демонстраційний об'єкт, щоб оцінити інтерфейс.</p>
+  <a href="{% url 'add_plant' %}" class="btn primary" data-i18n="addObject">Додати об'єкт</a>
+</section>
+{% endif %}
+{% include "anma_services.html" %}
+{% endblock %}
+
+{% block scripts %}
+{% if plant %}
+<script>
+window.ANMA={
+  plant:{{ plant.pk }},
+  mode:'{{ mode|default:"demo" }}',
+  timeZone:'Europe/Kyiv',
+  history:{{ history_json|safe }},
+  endpoint:'{% if demo_preview %}{% url "demo_dashboard" %}?data=live{% else %}{% url "live" plant.pk %}?mode={{ mode|default:"demo" }}{% endif %}',
+  historyEndpoint:'{% if demo_preview %}{% url "demo_dashboard" %}?data=history{% else %}{% url "history" plant.pk %}?mode={{ mode|default:"demo" }}{% endif %}'
+};
+</script>
+<style>.solar-hourly{display:grid;grid-template-columns:repeat(24,minmax(42px,1fr));gap:6px;overflow-x:auto;padding:12px 0}.solar-hour{text-align:center;font-size:10px;color:var(--muted)}.solar-hour-track{height:110px;display:flex;align-items:end;justify-content:center;border-bottom:1px solid var(--line);margin:8px 0}.solar-hour-track i{display:block;width:70%;background:var(--orange);border-radius:3px 3px 0 0}</style>
+<script src="/static/js/solar-hourly.js"></script>
+<script src="/static/js/dashboard.js"></script>
+{% endif %}
+{% endblock %}

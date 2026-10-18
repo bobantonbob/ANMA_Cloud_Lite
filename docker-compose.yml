@@ -1,0 +1,15 @@
+services:
+  anma-cloud:
+    build: .
+    container_name: anma-cloud-lite
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8095:8000"
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/',timeout=5)"]
+      interval: 30s
+      timeout: 8s
+      retries: 3

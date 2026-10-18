@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% load socialaccount %}{% block content %}
+<div class="auth-wrap"><div class="pill">ANMA CLOUD · ОСОБИСТИЙ КАБІНЕТ</div><h1>Уся ваша енергія.<br><span class="orange">Один кабінет.</span></h1>
+<p class="muted">Увійдіть через Google, додайте будинок за кодом ANMA і стежте за його енергією. Можна підключити кілька будинків.</p>
+{% if google_ready %}<form method="post" action="{% provider_login_url 'google' %}">{% csrf_token %}<button class="btn primary wide" type="submit">Продовжити з Google →</button></form>
+{% else %}<div class="notice" role="status">Вхід через Google ще налаштовується. Адміністратор має додати OAuth Client ID і Client Secret у конфігурацію сервера.</div>{% endif %}
+<p class="muted small">ANMA отримує підтверджену пошту. Пароль Google залишається у Google.</p><a class="text-btn" href="{% url 'admin:login' %}">Вхід адміністратора</a></div>
+{% endblock %}

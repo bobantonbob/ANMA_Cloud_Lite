@@ -1,0 +1,12 @@
+.mobile-header{display:none}.home-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}.danger-link{color:#ff9b8b}.danger-button{background:#9f332d;color:#fff;border:1px solid #d66e60}.form-panel>p{line-height:1.7}
+@media(max-width:690px){
+ body[data-mode="account"] .page-heading{display:flex!important}
+ .sidebar,.topbar,.cabinet-links{display:none!important}
+ .mobile-header{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px;padding:10px 16px;background:var(--side);border-bottom:1px solid var(--line);position:relative;z-index:20;flex-shrink:0}
+ .mobile-brand{min-width:0;display:flex;flex-direction:column;gap:3px}.mobile-brand strong{color:var(--orange);letter-spacing:2px}.mobile-brand span{margin-left:5px}.mobile-brand small{color:var(--muted);max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+ .mobile-menu summary{list-style:none;cursor:pointer;padding:12px;border:1px solid var(--line);border-radius:10px;font-weight:700;min-height:44px}.mobile-menu summary::-webkit-details-marker{display:none}.mobile-menu[open] summary{color:var(--orange)}
+ .mobile-menu-panel{position:absolute;left:0;right:0;top:64px;background:var(--side);border-bottom:1px solid var(--line);box-shadow:0 16px 30px #0005;padding:16px;max-height:calc(100dvh - 64px);overflow:auto}
+ .mobile-menu-panel nav{display:grid;gap:4px}.mobile-menu-panel nav a{padding:13px 12px;border-radius:8px}.mobile-menu-panel nav a:hover{background:var(--card2)}.mobile-home-picker{display:grid;gap:8px;padding:14px 0}.mobile-home-picker select{width:100%;padding:12px;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:8px}.mobile-mode-picker,.mobile-preferences{display:flex;gap:10px;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--line)}
+ body[data-mode="live"] .page-heading,body[data-mode="demo"] .page-heading,.mobile-status-strip,.mobile-anma-link,.object-bar,.mode-switch,[data-i18n="liveNotBound"]{display:none!important}
+ main{padding-top:12px!important}.energy-visual{margin-top:0!important}.energy-visual .panel-heading p{display:none}.energy-visual .panel-heading{padding:12px 16px!important}.energy-flow-canvas{margin-top:0!important}
+}

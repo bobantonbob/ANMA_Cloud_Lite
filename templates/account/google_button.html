@@ -1,0 +1,1 @@
+{% load socialaccount %}{% if google_ready %}<form method="post" action="{% provider_login_url 'google' %}">{% csrf_token %}<button class="btn ghost wide" type="submit">Продовжити з Google →</button></form><p class="muted small">Або скористайтеся поштою та паролем</p>{% endif %}

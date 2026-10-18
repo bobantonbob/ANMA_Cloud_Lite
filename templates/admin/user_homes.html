@@ -1,0 +1,4 @@
+{% extends 'admin/base_site.html' %}{% block content %}
+<div class="ops-heading"><div><span class="ops-kicker">КОРИСТУВАЧ / МАШИНИ</span><h1>{{ person.email|default:person.username }}</h1><p>Оберіть будинок для перегляду поточних даних.</p></div><a class="ops-button" href="{% url 'admin:auth_user_change' person.pk %}">Обліковий запис →</a></div>
+<section class="ops-panel"><div class="ops-table-wrap"><table class="ops-table"><thead><tr><th>Будинок</th><th>Tailscale IP</th><th>Показники</th></tr></thead><tbody>{% for home in homes %}<tr><td>{{ home.name }}</td><td>{{ home.connection.tailscale_ip|default:home.tailscale_ip|default:'—' }}</td><td><a class="ops-button" href="{% url 'admin:machine' home.pk %}">Поточні параметри →</a></td></tr>{% empty %}<tr><td colspan="3">Користувач ще не додав машин.</td></tr>{% endfor %}</tbody></table></div></section>
+{% endblock %}

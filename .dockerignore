@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.pyc
+db.sqlite3
+staticfiles/
+.git/
+
+.venv/
+.backups/
+tests/
+*.zip
+ha_integration/.test-deps/
+.local-secrets/
+release/
+.github/
