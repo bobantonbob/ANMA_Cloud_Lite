@@ -16,7 +16,12 @@ function updateMotion(id,path,active){
  const particle=document.querySelector('.'+id+'-particle');if(!particle)return;
  particle.classList.toggle('paused',!active);
  const motion=particle.querySelector('animateMotion');
- if(motion&&motion.getAttribute('path')!==path)motion.setAttribute('path',path);
+ if(motion&&motion.getAttribute('path')!==path){
+  motion.setAttribute('path',path);
+  // Restart the SMIL interval so an already-running particle adopts the new direction.
+  // Do not restart on unchanged telemetry: that would repeatedly jump to the start.
+  if(typeof motion.beginElement==='function')motion.beginElement();
+ }
 }
 function flowState(name,state,wire){
  const node=document.querySelector('.flow-'+name);if(node)node.dataset.state=state;
