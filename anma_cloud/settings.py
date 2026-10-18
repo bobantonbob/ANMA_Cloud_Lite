@@ -11,7 +11,7 @@ CSRF_TRUSTED_ORIGINS=[x.strip() for x in os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS'
 # Local requests without this header keep their original HTTP scheme.
 SECURE_PROXY_SSL_HEADER=('HTTP_X_FORWARDED_PROTO','https')
 INSTALLED_APPS=['django.contrib.admin','django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles','dashboard']
-MIDDLEWARE=['django.middleware.security.SecurityMiddleware','whitenoise.middleware.WhiteNoiseMiddleware','django.contrib.sessions.middleware.SessionMiddleware','django.middleware.common.CommonMiddleware','django.middleware.csrf.CsrfViewMiddleware','django.contrib.auth.middleware.AuthenticationMiddleware','django.contrib.messages.middleware.MessageMiddleware','django.middleware.clickjacking.XFrameOptionsMiddleware']
+MIDDLEWARE=['django.middleware.security.SecurityMiddleware','whitenoise.middleware.WhiteNoiseMiddleware','django.contrib.sessions.middleware.SessionMiddleware','django.middleware.common.CommonMiddleware','django.middleware.csrf.CsrfViewMiddleware','django.contrib.auth.middleware.AuthenticationMiddleware','django.contrib.messages.middleware.MessageMiddleware','anma_cloud.embed_security.TrustedFrameAncestorsMiddleware']
 ROOT_URLCONF='anma_cloud.urls'
 TEMPLATES=[{'BACKEND':'django.template.backends.django.DjangoTemplates','DIRS':[BASE_DIR/'templates'],'APP_DIRS':True,'OPTIONS':{'context_processors':['django.template.context_processors.debug','django.template.context_processors.request','django.contrib.auth.context_processors.auth','django.contrib.messages.context_processors.messages']}}]
 WSGI_APPLICATION='anma_cloud.wsgi.application'
@@ -32,7 +32,9 @@ CSRF_COOKIE_HTTPONLY=True
 SESSION_COOKIE_SECURE=not DEBUG
 CSRF_COOKIE_SECURE=not DEBUG
 SECURE_CONTENT_TYPE_NOSNIFF=True
-X_FRAME_OPTIONS='DENY'
+# Embedding origins: comma-separated browser origins (scheme + host + optional port).
+# Example: http://100.114.0.63:8123,https://ha.example.com
+ANMA_FRAME_ANCESTORS = [origin.strip() for origin in os.getenv('ANMA_FRAME_ANCESTORS', '').split(',') if origin.strip()]
 
 # One explicitly bound local HA installation. These values never enter templates.
 HA_URL=os.getenv('HA_URL','').rstrip('/')
