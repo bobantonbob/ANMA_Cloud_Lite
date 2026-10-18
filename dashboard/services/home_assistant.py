@@ -246,6 +246,9 @@ class HomeAssistant:
                   'available':any(items for items in events.values()),'updated_at':end.isoformat()}
         from .solar_history import hourly_solar
         result['solar_hourly'] = hourly_solar(events, end)
+        result['solar_yesterday'] = hourly_solar(events, end, timezone.localdate(end)-timedelta(days=1))
+        result['solar_date'] = timezone.localdate(end).isoformat()
+        result['solar_timezone'] = str(timezone.get_current_timezone())
         result['source'] = 'home_assistant'
         cache.set(self.key+':history',result,60)
         return result

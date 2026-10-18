@@ -1,10 +1,10 @@
 """Hourly energy from HA recorder; no database writes or invented zeroes."""
-from datetime import timedelta, timezone as utc_timezone
+from datetime import datetime, time, timedelta, timezone as utc_timezone
 from django.utils import timezone
 
-def hourly_solar(events, end):
+def hourly_solar(events, end, day=None):
     local = timezone.localtime(end)
-    midnight = local.replace(hour=0, minute=0, second=0, microsecond=0)
+    midnight = datetime.combine(day or local.date(), time.min, tzinfo=local.tzinfo)
     next_day = midnight + timedelta(days=1)
     start = midnight.astimezone(utc_timezone.utc)
     stop = next_day.astimezone(utc_timezone.utc)

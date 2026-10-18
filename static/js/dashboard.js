@@ -30,6 +30,7 @@ function render(d){
  const notice=el('telemetryError');if(notice){notice.hidden=online;notice.textContent=online?'':tr(d.error==='authentication_failed'?'authenticationError':d.error==='live_not_bound'?'notBound':'connectionError');}
  const read=key=>online?reading(d[key]):null;
  const pv=read('pv_power'),load=read('load_power'),battery=read('battery_power'),grid=read('grid_power');
+ window.dispatchEvent(new CustomEvent('anma-live',{detail:{pv,load,battery,grid,online}}));
  const rawSoc=read('battery_soc'),soc=rawSoc!==null&&rawSoc>=0&&rawSoc<=100?rawSoc:null;
  const voltage=read('grid_voltage');
  // Explicit availability wins. Voltage is a fallback for older demo responses.

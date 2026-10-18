@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <div class="mobile-status-strip"><span class="status-dot"></span><span data-connection-label>—</span><small id="updatedMobile">—</small></div>
 <div class="page-heading">
@@ -55,9 +56,10 @@
     <div class="flow-item flow-solar"><span class="flow-glyph" id="sunGlyph">☀</span><strong><span id="flowPv">—</span> <small>кВт</small></strong><span class="flow-name" data-i18n="flowSolar">СОНЦЕ · PV</span><span class="flow-state" id="flowSolarStatus">—</span></div>
     <div class="flow-item flow-grid"><span class="flow-glyph">🌐</span><strong><span id="flowGrid">—</span> <small>кВт</small></strong><span class="flow-name" data-i18n="grid">Електромережа</span><span class="flow-state" id="flowGridStatusText">—</span></div>
     <div class="flow-item flow-load"><span class="flow-glyph">🏠</span><strong><span id="flowLoad">—</span> <small>кВт</small></strong><span class="flow-name" data-i18n="flowHouse">БУДИНОК</span></div>
-    <div class="flow-hub"><div class="hub-symbol">⚡</div><small>ANMA</small></div>
+    <div class="flow-hub"><svg id="sourceRing" class="source-ring" viewBox="0 0 100 100" role="img" aria-label="Джерела живлення"><circle class="source-ring-track" cx="50" cy="50" r="45"/><circle id="sourceSolar" cx="50" cy="50" r="45" pathLength="100"/><circle id="sourceGrid" cx="50" cy="50" r="45" pathLength="100"/><circle id="sourceBattery" cx="50" cy="50" r="45" pathLength="100"/></svg><div class="hub-symbol">⚡</div><small>ANMA</small></div>
     <div class="flow-item flow-battery"><span class="flow-glyph">🔋</span><strong><span id="flowSoc">—</span><small>%</small></strong><span class="flow-name" data-i18n="battery">Акумулятор</span><span class="flow-state" id="flowBatteryStatus">—</span><span class="flow-battery-power" id="flowBatteryPower">— кВт</span></div>
   </div>
+  <div id="sourceLegend" class="source-legend" aria-live="polite"></div>
   <div class="flow-footer"><span><i class="flow-led"></i><span data-i18n="flowFooter">Демонстраційні показники · потоки змінюють напрямок автоматично</span></span><span id="flowUpdated">—</span></div>
 </section>
 <section class="forecast-grid" aria-label="Solar forecast">
@@ -119,12 +121,13 @@
 </div>
 
 <div class="bottom-grid"><section class="panel daily-panel">
-    <div class="panel-heading"><strong data-i18n="dailySummary">Сьогодні</strong><span class="range">00–24</span></div>
+    <div class="panel-heading"><strong data-i18n="dailySummary">Сьогодні</strong><span id="solarDay" class="range">00–24</span></div>
     <span class="muted" data-i18n="solarProduction">Генерація сонця</span>
     <div class="daily-value"><span id="daily">—</span><small>кВт·год</small></div>
     <p id="solarHourlyStatus" class="muted small">Генерація за кожну годину · завантаження історії…</p>
+    <select id="solarPeriod" aria-label="Період генерації"><option value="today">Сьогодні</option><option value="yesterday">Вчора</option></select>
     <div id="solarHourly" class="solar-hourly" aria-label="Погодинна генерація сонця"></div>
-    <div class="mini-bars" aria-hidden="true" {% if mode == 'live' %}hidden{% endif %}><span style="height:32%"></span><span style="height:47%"></span><span style="height:63%"></span><span style="height:90%"></span><span style="height:72%"></span><span style="height:100%"></span><span style="height:64%"></span><span style="height:49%"></span><span style="height:30%"></span></div>
+
     <p class="muted small" data-i18n="demoCaption">Показники демонстраційні, не з реального обладнання</p>
   </section></div>
 <div class="health-early"><section class="panel">
@@ -157,7 +160,8 @@ window.ANMA={
 };
 </script>
 <style>.solar-hourly{display:grid;grid-template-columns:repeat(24,minmax(42px,1fr));gap:6px;overflow-x:auto;padding:12px 0}.solar-hour{text-align:center;font-size:10px;color:var(--muted)}.solar-hour-track{height:110px;display:flex;align-items:end;justify-content:center;border-bottom:1px solid var(--line);margin:8px 0}.solar-hour-track i{display:block;width:70%;background:var(--orange);border-radius:3px 3px 0 0}</style>
-<script src="/static/js/solar-hourly.js"></script>
-<script src="/static/js/dashboard.js"></script>
+<script src="{% static 'js/source-mix.js' %}"></script>
+<script src="{% static 'js/solar-hourly.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
 {% endif %}
 {% endblock %}

@@ -23,3 +23,14 @@ def history(plant):
   bat=round((pv-load)*.45)
   result.append({'timestamp':stamp.isoformat(),'time':f'{int(h):02d}:{int(h%1*60):02d}','pv':pv,'load':load,'battery':bat,'grid':load-pv+bat,'soc':max(17,min(100,round(65+18*math.sin(i/20))))})
  return result
+
+
+def history_payload(plant):
+ from .services.solar_history import hourly_solar
+ series=history(plant)
+ end=datetime.datetime.fromisoformat(series[-1]['timestamp'])
+ events={'pv_power':[(datetime.datetime.fromisoformat(row['timestamp']),row['pv']) for row in series]}
+ return {'series':series,'demo':True,'available':True,
+         'solar_hourly':hourly_solar(events,end),
+         'solar_yesterday':hourly_solar(events,end,timezone.localdate(end)-datetime.timedelta(days=1)),
+         'solar_date':timezone.localdate(end).isoformat(),'solar_timezone':str(timezone.get_current_timezone())}

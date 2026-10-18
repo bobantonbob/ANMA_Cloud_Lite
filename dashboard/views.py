@@ -12,7 +12,7 @@ from django.views.decorators.http import require_GET,require_POST
 from django.views.decorators.debug import sensitive_post_parameters
 from .forms import RegisterForm,PlantForm,PlantRenameForm
 from .models import Plant,PlantAccess
-from .demo import snapshot,history
+from .demo import snapshot,history,history_payload
 from .services.pairing import pair_plant, service_for
 from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -93,7 +93,7 @@ def chart(request,pk):
  if mode is None:
   return JsonResponse({'error':'invalid_mode'},status=400)
  if mode=='demo':
-  return JsonResponse({'series':history(plant),'demo':True,'available':True})
+  return JsonResponse(history_payload(plant))
  if not live_allowed(plant):
   return JsonResponse({'series':[],'demo':False,'error':'live_not_bound'},status=403)
  try:
@@ -168,5 +168,5 @@ def demo_dashboard(request):
  from types import SimpleNamespace
  plant=SimpleNamespace(pk=0,name='ANMA · Демо будинок',model='Демонстраційні дані')
  if request.GET.get('data')=='live':return JsonResponse(snapshot(plant))
- if request.GET.get('data')=='history':return JsonResponse({'series':history(plant),'demo':True,'available':True})
+ if request.GET.get('data')=='history':return JsonResponse(history_payload(plant))
  return render(request,'dashboard.html',{'plant':plant,'plants':[plant],'mode':'demo','demo_preview':True,'history_json':json.dumps(history(plant)),'live_available':False})

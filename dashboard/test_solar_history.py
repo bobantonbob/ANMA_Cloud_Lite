@@ -36,3 +36,21 @@ class SolarHistoryTests(SimpleTestCase):
         rows=hourly_solar({},end)
         self.assertEqual(len(rows),25)
         self.assertEqual(len(set(r['timestamp'] for r in rows)),25)
+
+    def test_yesterday_remains_available_after_midnight(self):
+        end=self.start+timedelta(days=1,minutes=18)
+        events={'daily_pv':[(self.start,0),(self.start+timedelta(hours=12),3),
+                            (self.start+timedelta(hours=13),5),(self.start+timedelta(days=1),0)]}
+        today=hourly_solar(events,end)
+        yesterday=hourly_solar(events,end,self.start.date())
+        self.assertEqual(today[0]['kwh'],0)
+        self.assertEqual(yesterday[12]['kwh'],2)
+        self.assertEqual(len(yesterday),24)
+        self.assertTrue(all(row['status']=='complete' for row in yesterday))
+
+    def test_missing_counter_falls_back_to_hourly_power(self):
+        events={'pv_power':[(self.start,0),(self.start+timedelta(hours=8),2000),
+                           (self.start+timedelta(hours=9),0)]}
+        rows=hourly_solar(events,self.start+timedelta(hours=10))
+        self.assertEqual(rows[8]['kwh'],2)
+        self.assertEqual(rows[8]['method'],'power_estimate')

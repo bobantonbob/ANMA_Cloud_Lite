@@ -1,0 +1,11 @@
+const assert = require('node:assert/strict');
+const shares = require('../static/js/source-mix.js');
+const base={online:true,load:1000,pv:0,grid:0,battery:-1000};
+assert.deepEqual(shares(base).rounded,[0,0,100]);
+assert.deepEqual(shares({...base,pv:1000,grid:1000,battery:-2000}).rounded,[25,25,50]);
+assert.deepEqual(shares({...base,pv:2000,grid:-500,battery:500}).rounded,[100,0,0]);
+assert.equal(shares({...base,battery:null}),null);
+assert.equal(shares({...base,online:false}),null);
+assert.equal(shares({...base,load:0}),null);
+assert.equal(shares({...base,pv:1,grid:1,battery:-1}).rounded.reduce((a,b)=>a+b,0),100);
+console.log('Source shares: all checks passed');
