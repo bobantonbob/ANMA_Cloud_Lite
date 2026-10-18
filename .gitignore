@@ -4,7 +4,7 @@
 __pycache__/
 *.pyc
 *.sqlite3
-*.zip
+
 staticfiles/
 tests/preview*.png
 tests/preview.html
@@ -35,7 +35,7 @@ media/
 staticfiles/
 *.log
 *.bak
-*.zip
+
 '@ | Set-Content .gitignore
 /ha_integration/
 /hacs-catalog-submission/
