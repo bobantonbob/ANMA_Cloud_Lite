@@ -158,7 +158,7 @@ def integration_download(request):
     archive.write(path,path.relative_to(root))
   archive.write(root/'README_UA.md','README_UA.md')
  stream.seek(0)
- return FileResponse(stream,as_attachment=True,filename='ANMA_HA_Integration_v0.3.0.zip')
+ return FileResponse(stream,as_attachment=True,filename=f"ANMA_HA_Integration_v{json.loads((root/'custom_components/anma_cloud/manifest.json').read_text(encoding='utf-8'))['version']}.zip")
 @login_required
 def settings_page(request):return render(request,'settings.html')
 

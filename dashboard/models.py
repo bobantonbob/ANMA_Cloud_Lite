@@ -26,7 +26,7 @@ class PlantAccess(models.Model):
 class HAConnection(models.Model):
  plant=models.OneToOneField(Plant,on_delete=models.CASCADE,related_name='connection')
  installation_id=models.CharField(max_length=64,unique=True)
- tailscale_ip=models.GenericIPAddressField(protocol='IPv4',unique=True)
+ tailscale_ip=models.GenericIPAddressField(protocol='IPv4',db_index=True)
  credential=models.TextField(editable=False)
  enabled=models.BooleanField(default=True)
  paired_at=models.DateTimeField(auto_now_add=True)

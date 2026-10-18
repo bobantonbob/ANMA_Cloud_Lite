@@ -80,6 +80,21 @@ class PairingTests(TestCase):
         self.assertEqual(self.client.get(f'/api/plants/{first.pk}/live/').status_code,404)
         self.assertEqual(self.client.get(f'/api/plants/{second.pk}/history/').status_code,404)
 
+    def test_two_installations_share_address_and_repair_independently(self):
+        first = self.pair()
+        first_key = first.connection.credential
+        self.installation = 'b'*32
+        second = self.pair()
+        self.assertNotEqual(first.pk, second.pk)
+        self.assertEqual(first.connection.tailscale_ip, second.connection.tailscale_ip)
+        self.assertNotEqual(first_key, second.connection.credential)
+        self.assertEqual(self.pair().pk, second.pk)
+        first.connection.refresh_from_db()
+        self.assertEqual(first.connection.credential, first_key)
+        with patch('dashboard.services.pairing.connector_request', side_effect=self.remote), self.assertRaises(HAError):
+            pair_plant(self.other, 'Claim', '100.64.1.2', self.code)
+        self.assertEqual(HAConnection.objects.count(), 2)
+
     def test_wrong_code_no_creation(self):
         with patch('dashboard.services.pairing.connector_request',side_effect=self.remote),self.assertRaises(HAError):
             pair_plant(self.user,'Дім','100.64.1.2','B'*32)

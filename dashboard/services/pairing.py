@@ -86,8 +86,7 @@ def pair_plant(user, name, address, code):
             raise HAError('invalid_response')
         with transaction.atomic():
             existing = HAConnection.objects.select_for_update().select_related('plant').filter(installation_id=installation).first()
-            occupied = HAConnection.objects.filter(tailscale_ip=address).exclude(installation_id=installation).exists()
-            if occupied or (existing and existing.plant.owner_id != user.pk):
+            if existing and existing.plant.owner_id != user.pk:
                 raise HAError('already_bound')
             if existing and not existing.enabled:
                 raise HAError('connection_disabled')
