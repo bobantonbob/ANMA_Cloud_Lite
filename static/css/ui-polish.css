@@ -13,3 +13,9 @@
 /* Let compact KPI content determine height, with equal padding on all sides. */
 .desktop-kpis .kpi{min-height:0;padding:20px}
 @media(max-width:690px){.desktop-kpis .kpi{padding:14px}}
+
+.cabinet-links{gap:8px}
+.cabinet-links a,.mobile-menu-panel nav a{border:1px solid rgba(255,122,24,.28);background:rgba(255,122,24,.035);border-radius:9px;padding:10px 13px;text-decoration:none;line-height:1.35}
+.cabinet-links a:hover,.mobile-menu-panel nav a:hover{border-color:var(--orange);background:rgba(255,122,24,.1)}
+.cabinet-links a:focus-visible,.mobile-menu-panel nav a:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+@media(max-width:690px){.cabinet-links{display:flex!important;flex-wrap:nowrap;gap:5px;margin-bottom:12px}.cabinet-links a{font-size:clamp(8px,2.45vw,11px);min-height:36px;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:7px 5px;flex:1 1 auto;letter-spacing:0}.mobile-menu-panel nav{gap:8px}}
