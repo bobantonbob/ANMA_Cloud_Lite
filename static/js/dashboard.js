@@ -4,7 +4,12 @@ const el=id=>document.getElementById(id);
 let history=app.history||[],latest=null,lastUpdated=null;
 // Missing telemetry must never be displayed as a measured zero.
 const reading=v=>v===null||v===undefined||typeof v==='boolean'||String(v).trim()===''?null:Number.isFinite(Number(v))?Number(v):null;
-const kw=v=>reading(v)===null?'—':(Number(v)/1000).toFixed(2);
+function power(v){
+ const watts=reading(v), kilo=watts!==null&&Math.abs(watts)>=1000;
+ return {value:watts===null?'—':kilo?(watts/1000).toFixed(3):String(Math.round(watts)||0),unit:lang()==='en'?(kilo?'kW':'W'):(kilo?'кВт':'Вт')};
+}
+function setPower(id,v){const p=power(v);set(id,p.value);set(id+'Unit',p.unit);}
+function powerText(v){const p=power(v);return p.value+' '+p.unit;}
 const magnitude=v=>v===null?null:Math.abs(v);
 const lang=()=>localStorage.getItem('anma_lang')==='en'?'en':'uk';
 const labels={uk:{import:'→ ІМПОРТ',export:'← ЕКСПОРТ',idle:'БЕЗ ПЕРЕТОКУ',charge:'↓ ЗАРЯД',discharge:'↑ РОЗРЯД',offline:'НЕМАЄ ЗВʼЯЗКУ',battery:'АКУМУЛЯТОР',time:'Час',power:'Потужність',unknown:'НЕМАЄ ДАНИХ',noSolar:'БЕЗ ГЕНЕРАЦІЇ',generating:'ГЕНЕРАЦІЯ',noGrid:'МЕРЕЖА ВІДСУТНЯ',gridOn:'Мережа доступна',online:'ДЕМО · ОНЛАЙН',inverter:'Інвертор онлайн',connected:'Зʼєднання активне',normal:'Норма',fault:'Помилка інвертора',noFault:'Помилок не виявлено',last:'Останні дані',unit:'кВт'},en:{import:'→ IMPORT',export:'← EXPORT',idle:'IDLE',charge:'↓ CHARGING',discharge:'↑ DISCHARGING',offline:'OFFLINE',battery:'BATTERY',time:'Time',power:'Power',unknown:'NO DATA',noSolar:'NO GENERATION',generating:'GENERATING',noGrid:'GRID UNAVAILABLE',gridOn:'Grid available',online:'DEMO · ONLINE',inverter:'Inverter online',connected:'Connection active',normal:'Normal',fault:'Inverter fault',noFault:'No faults detected',last:'Last data',unit:'kW'}};
@@ -43,16 +48,16 @@ function render(d){
  const gridActive=gridAvailable===true&&grid!==null&&grid!==0;
  const gridLabel=gridAvailable===false?tr('noGrid'):gridAvailable===null||grid===null?tr('unknown'):grid>0?tr('import'):grid<0?tr('export'):tr('idle');
  const batteryLabel=battery===null?tr('unknown'):battery>0?tr('charge'):battery<0?tr('discharge'):tr('idle');
- set('pv',kw(pv));set('flowPv',kw(pv));set('load',kw(load));set('flowLoad',kw(load));
+ setPower('pv',pv);setPower('flowPv',pv);setPower('load',load);setPower('flowLoad',load);
  set('soc',soc??'—');set('flowSoc',soc??'—');if(el('socBar'))el('socBar').style.width=(soc??0)+'%';
  const gridDisplay=gridAvailable===null?null:magnitude(grid);
- set('grid',kw(gridDisplay));set('flowGrid',kw(gridDisplay));
+ setPower('grid',gridDisplay);setPower('flowGrid',gridDisplay);
  set('gridStatus',gridLabel);set('flowGridStatusText',gridLabel);
  set('batteryStatus',batteryLabel);set('flowBatteryStatus',batteryLabel);
  set('batteryDirectionMark',battery===null?'?':battery>0?'↓':battery<0?'↑':'—');
  const batteryMagnitude=read('battery_power_magnitude')??magnitude(battery);
- set('flowBatteryPower',kw(batteryMagnitude)+' '+tr('unit'));
- set('batteryPower',kw(batteryMagnitude)+' '+tr('unit'));
+ set('flowBatteryPower',powerText(batteryMagnitude));
+ set('batteryPower',powerText(batteryMagnitude));
  set('flowSolarStatus',pv===null?tr('unknown'):pv>0?tr('generating'):tr('noSolar'));
  flowState('solar',pv===null?'unknown':pv>0?'active':'idle','wirePv');
  flowState('grid',gridAvailable===false?'unavailable':gridAvailable===null||grid===null?'unknown':gridActive?'active':'idle','wireGrid');
@@ -138,7 +143,7 @@ function move(id,event){
  const item=history[ix],reticle=el(id==='powerChart'?'powerReticle':'batteryReticle');
  if(reticle){reticle.hidden=false;reticle.style.left=cfg.xCoord(ix)+'px';}
  tip.replaceChildren();const title=document.createElement('b');title.textContent=tr('time')+': '+(item.timestamp?localTime(cfg.times[ix],true):String(item.time||''));tip.append(title);
- for(const line of cfg.lines){const row=document.createElement('div'),dot=document.createElement('span');dot.className='dot-mark';dot.style.background=getComputedStyle(document.documentElement).getPropertyValue(line.color).trim();const v=cfg.value(item,line);row.append(dot,document.createTextNode(line.label+': '+(v===null?'—':((['grid','battery'].includes(line.key)&&v>0?'+':'')+v.toFixed(line.key==='soc'?0:2)))+' '+(line.key==='soc'?'%':tr('unit'))));tip.append(row);}
+ for(const line of cfg.lines){const row=document.createElement('div'),dot=document.createElement('span');dot.className='dot-mark';dot.style.background=getComputedStyle(document.documentElement).getPropertyValue(line.color).trim();const v=cfg.value(item,line);row.append(dot,document.createTextNode(line.label+': '+(v===null?'—':(line.key==='soc'?v.toFixed(0)+' %':(['grid','battery'].includes(line.key)&&v>0?'+':'')+powerText(v*line.scale)))));tip.append(row);}
  tip.hidden=false;tip.style.left=Math.max(2,Math.min(cfg.width-tip.offsetWidth-2,x+12))+'px';tip.style.top='18px';
 }
 Object.keys(definitions).forEach(id=>{const canvas=el(id);if(!canvas)return;canvas.addEventListener('pointermove',e=>move(id,e));canvas.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')canvas.setPointerCapture(e.pointerId);move(id,e);});canvas.addEventListener('pointerleave',e=>{if(e.pointerType!=='touch')hideTip(id);});canvas.addEventListener('pointercancel',()=>hideTip(id));});

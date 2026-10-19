@@ -53,9 +53,9 @@
       <circle class="particle paused load-particle" r="4"><animateMotion dur="1.6s" repeatCount="indefinite" path="M340 205 H493"/></circle>
       <circle class="particle paused battery-particle" r="4"><animateMotion id="animBattery" dur="1.8s" repeatCount="indefinite" path="M300 313 V230"/></circle>
     </svg>
-    <div class="flow-item flow-solar"><span class="flow-glyph" id="sunGlyph">☀</span><strong><span id="flowPv">—</span> <small>кВт</small></strong><span class="flow-name" data-i18n="flowSolar">СОНЦЕ · PV</span><span class="flow-state" id="flowSolarStatus">—</span></div>
-    <div class="flow-item flow-grid"><span class="flow-glyph">🌐</span><strong><span id="flowGrid">—</span> <small>кВт</small></strong><span class="flow-name" data-i18n="grid">Електромережа</span><span class="flow-state" id="flowGridStatusText">—</span></div>
-    <div class="flow-item flow-load"><span class="flow-glyph">🏠</span><strong><span id="flowLoad">—</span> <small>кВт</small></strong><span class="flow-name" data-i18n="flowHouse">БУДИНОК</span></div>
+    <div class="flow-item flow-solar"><span class="flow-glyph" id="sunGlyph">☀</span><strong><span id="flowPv">—</span> <small id="flowPvUnit">Вт</small></strong><span class="flow-name" data-i18n="flowSolar">СОНЦЕ · PV</span><span class="flow-state" id="flowSolarStatus">—</span></div>
+    <div class="flow-item flow-grid"><span class="flow-glyph">🌐</span><strong><span id="flowGrid">—</span> <small id="flowGridUnit">Вт</small></strong><span class="flow-name" data-i18n="grid">Електромережа</span><span class="flow-state" id="flowGridStatusText">—</span></div>
+    <div class="flow-item flow-load"><span class="flow-glyph">🏠</span><strong><span id="flowLoad">—</span> <small id="flowLoadUnit">Вт</small></strong><span class="flow-name" data-i18n="flowHouse">БУДИНОК</span></div>
     <div class="flow-hub"><svg id="sourceRing" class="source-ring" viewBox="0 0 100 100" role="img" aria-label="Джерела живлення"><circle class="source-ring-track" cx="50" cy="50" r="45"/><circle id="sourceSolar" cx="50" cy="50" r="45" pathLength="100"/><circle id="sourceGrid" cx="50" cy="50" r="45" pathLength="100"/><circle id="sourceBattery" cx="50" cy="50" r="45" pathLength="100"/></svg><div class="hub-symbol">⚡</div><small>ANMA</small></div>
     <div class="flow-item flow-battery"><span class="flow-glyph">🔋</span><strong><span id="flowSoc">—</span><small>%</small></strong><span class="flow-name" data-i18n="battery">Акумулятор</span><span class="flow-state" id="flowBatteryStatus">—</span><span class="flow-battery-power" id="flowBatteryPower">— кВт</span></div>
   </div>
@@ -69,12 +69,12 @@
 <div class="kpi-grid desktop-kpis">
   <article class="kpi">
     <div class="kpi-title"><span class="kpi-icon sun">☀</span><span data-i18n="solar">Сонячна генерація</span></div>
-    <div class="kpi-number"><span id="pv">—</span><small>кВт</small></div>
+    <div class="kpi-number"><span id="pv">—</span><small id="pvUnit">Вт</small></div>
     <div class="kpi-foot"><span class="dot amber"></span><span data-i18n="solarReal">Поточна потужність</span></div>
   </article>
   <article class="kpi">
     <div class="kpi-title"><span class="kpi-icon house">⌂</span><span data-i18n="homeLoad">Навантаження</span></div>
-    <div class="kpi-number"><span id="load">—</span><small>кВт</small></div>
+    <div class="kpi-number"><span id="load">—</span><small id="loadUnit">Вт</small></div>
     <div class="kpi-foot"><span class="dot blue"></span><span data-i18n="homeReal">Споживання будинку</span></div>
   </article>
   <article class="kpi">
@@ -83,7 +83,7 @@
   </article>
   <article class="kpi">
     <div class="kpi-title"><span class="kpi-icon grid">ϟ</span><span data-i18n="grid">Електромережа</span></div>
-    <div class="kpi-number"><span id="grid">—</span><small>кВт</small></div>
+    <div class="kpi-number"><span id="grid">—</span><small id="gridUnit">Вт</small></div>
     <div class="kpi-foot"><span class="dot blue"></span><span id="gridStatus">—</span></div>
   </article>
 </div>
