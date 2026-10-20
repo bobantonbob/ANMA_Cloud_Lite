@@ -1,0 +1,28 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'ua.com.anmaelectric.cloud'
+    compileSdk 35
+    buildToolsVersion '35.0.0'
+    defaultConfig {
+        applicationId 'ua.com.anmaelectric.cloud'
+        minSdk 23
+        targetSdk 35
+        versionCode 2
+        versionName '0.1.1-preview'
+    }
+    signingConfigs {
+        debug {
+            storeFile rootProject.file('.local/preview.keystore')
+            storePassword 'android'
+            keyAlias 'anma-preview'
+            keyPassword 'android'
+        }
+    }
+    buildTypes { debug { debuggable false } }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+    implementation 'androidx.browser:browser:1.8.0'
+}

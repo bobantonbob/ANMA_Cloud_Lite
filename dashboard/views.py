@@ -18,6 +18,16 @@ from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
 from django.http import FileResponse
 from django.contrib.auth import get_user_model
+from pathlib import Path
+
+
+@require_GET
+def android_download(request):
+ apk = Path(settings.BASE_DIR) / 'downloads' / 'android' / 'ANMA-Cloud-0.1.1-preview.apk'
+ if not apk.is_file():
+  raise Http404('Android download unavailable')
+ return FileResponse(apk.open('rb'), as_attachment=True, filename=apk.name,
+                     content_type='application/vnd.android.package-archive')
 
 @never_cache
 def landing(request):

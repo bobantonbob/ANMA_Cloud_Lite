@@ -4,3 +4,7 @@ document.querySelector('[data-mobile-theme]').addEventListener('click',()=>setTh
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.open){menu.open=false;menu.querySelector('summary').focus();}});
 document.addEventListener('click',e=>{if(!menu.contains(e.target))menu.open=false;});
 })();
+document.querySelectorAll('.android-download').forEach(panel=>{
+document.addEventListener('click',event=>{if(!panel.contains(event.target))panel.open=false;});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&panel.open){panel.open=false;panel.querySelector('summary').focus();}});
+});

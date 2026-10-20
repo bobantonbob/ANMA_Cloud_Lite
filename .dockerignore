@@ -17,3 +17,4 @@ release/
 **/.git
 .deploy.lock
 /hacs-catalog-submission/
+android/

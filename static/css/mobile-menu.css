@@ -1,5 +1,13 @@
 .mobile-header{display:none}.home-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}.danger-link{color:#ff9b8b}.danger-button{background:#9f332d;color:#fff;border:1px solid #d66e60}.form-panel>p{line-height:1.7}
 @media(max-width:690px){
+ .mobile-header:has(.mobile-station-picker){gap:8px}
+ .mobile-header:has(.mobile-station-picker) .mobile-brand{flex:0 0 78px;overflow:hidden}
+ .mobile-header:has(.mobile-station-picker) .mobile-brand small{max-width:78px}
+ .mobile-station-picker{flex:1 1 0;min-width:0;margin:0}
+ .mobile-station-picker select{display:block;width:100%;min-width:0;min-height:44px;padding:8px 22px 8px 8px;border:1px solid #ff790044;border-radius:10px;background-color:var(--card);color:var(--text);font:inherit;font-size:16px;text-overflow:ellipsis;cursor:pointer}
+ .mobile-station-picker select:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+ .mobile-header:has(.mobile-station-picker) .mobile-menu{flex-shrink:0}
+ .mobile-header:has(.mobile-station-picker) .mobile-menu summary{padding:12px 8px;white-space:nowrap}
  body[data-mode="account"] .page-heading{display:flex!important}
  .sidebar,.topbar,.cabinet-links{display:none!important}
  .mobile-header{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px;padding:10px 16px;background:var(--side);border-bottom:1px solid var(--line);position:relative;z-index:20;flex-shrink:0}

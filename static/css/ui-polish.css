@@ -15,6 +15,18 @@
 @media(max-width:690px){.desktop-kpis .kpi{padding:14px}}
 
 .cabinet-links{gap:8px}
+.android-download{position:relative;align-self:center;color:var(--orange)}
+.android-download summary{cursor:pointer;list-style:none;border:1px solid #ff7a1847;background:#ff7a1809;border-radius:9px;padding:10px 13px;font-weight:700;white-space:nowrap}
+.android-download summary::-webkit-details-marker{display:none}
+.android-download summary:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+.android-download-panel{position:absolute;top:calc(100% + 8px);right:0;z-index:40;width:min(380px,calc(100vw - 32px));padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);box-shadow:0 12px 40px #0007;font-size:14px;line-height:1.6;max-height:70dvh;overflow:auto}
+.android-download-panel p{margin:10px 0}.android-download-panel ol{padding-left:20px}.android-download-panel li{margin:8px 0}
+.cabinet-links .android-download-panel a{display:inline-flex;font-size:14px;background:var(--orange);color:#111;padding:12px 16px}
+@media(max-width:690px){
+ .cabinet-links>.android-download{display:none}
+ .mobile-menu-panel>.android-download{margin:12px 0}
+ .mobile-menu-panel .android-download-panel{position:static;width:100%;max-height:none;margin-top:8px;box-shadow:none}
+}
 .cabinet-links a,.mobile-menu-panel nav a{border:1px solid rgba(255,122,24,.28);background:rgba(255,122,24,.035);border-radius:9px;padding:10px 13px;text-decoration:none;line-height:1.35}
 .cabinet-links a:hover,.mobile-menu-panel nav a:hover{border-color:var(--orange);background:rgba(255,122,24,.1)}
 .cabinet-links a:focus-visible,.mobile-menu-panel nav a:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
